@@ -60,6 +60,17 @@ Invertis University · 2023 — 2027
 
 ---
 
+### Development
+```bash
+npm install
+npm run dev
+```
+
+### Production Build
+```bash
+npm run build
+```
+
 ## Connect
 
 📧 **Email:** iabhay.thakur18@gmail.com
