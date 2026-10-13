@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import watermarkImg from '../assets/watermark.png';
-import portraitImg from '../assets/abhay-portrait.png';
+import portraitImg from '../assets/abhay-portrait.webp';
 import { portfolioData } from '../data/portfolio';
 
 const containerVariants: Variants = {
@@ -30,21 +30,35 @@ const fadeUpVariants: Variants = {
 };
 
 export const HeroSection: React.FC = () => {
-  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
+  const [hasMoved, setHasMoved] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [videoError, setVideoError] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const springX = useSpring(cursorX, { damping: 32, stiffness: 400, mass: 0.4 });
+  const springY = useSpring(cursorY, { damping: 32, stiffness: 400, mass: 0.4 });
+
   useEffect(() => {
-    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    setIsTouchDevice(isTouch);
+    if (isTouch) return;
+
+    let initialMoved = false;
     const handleMouseMove = (e: MouseEvent) => {
-      setCursorPos({ x: e.clientX, y: e.clientY });
+      if (!initialMoved) {
+        initialMoved = true;
+        setHasMoved(true);
+      }
+      cursorX.set(e.clientX);
+      cursorY.set(e.clientY);
     };
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  }, [cursorX, cursorY]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -57,17 +71,21 @@ export const HeroSection: React.FC = () => {
   return (
     <section className="relative w-full min-h-screen overflow-hidden bg-black text-[#E8DFD8] font-sans selection:bg-[#cbb59d] selection:text-black cursor-default md:cursor-none flex flex-col justify-between pt-20 sm:pt-24 lg:pt-28">
       {/* ================= 1. MINIMAL CUSTOM CURSOR (DESKTOP FINE POINTER ONLY) ================= */}
-      {!isTouchDevice && cursorPos.x >= 0 && (
+      {!isTouchDevice && hasMoved && (
         <motion.div
           className="fixed top-0 left-0 pointer-events-none z-50 rounded-full border border-[#D4AF37]/50 hidden md:flex items-center justify-center backdrop-blur-[2px]"
+          style={{
+            x: springX,
+            y: springY,
+            translateX: isHovered ? -24 : -5,
+            translateY: isHovered ? -24 : -5,
+          }}
           animate={{
-            x: cursorPos.x - (isHovered ? 24 : 5),
-            y: cursorPos.y - (isHovered ? 24 : 5),
             width: isHovered ? 48 : 10,
             height: isHovered ? 48 : 10,
             backgroundColor: isHovered ? 'rgba(212, 175, 55, 0.12)' : 'rgba(235, 215, 195, 0.95)',
           }}
-          transition={{ type: 'spring', damping: 32, stiffness: 400, mass: 0.4 }}
+          transition={{ duration: 0.2 }}
         />
       )}
 
@@ -82,8 +100,8 @@ export const HeroSection: React.FC = () => {
               muted
               loop
               playsInline
-              preload="auto"
-              poster="/images/abhay-portrait.png"
+              preload="metadata"
+              poster="/images/abhay-portrait.webp"
               onLoadedData={() => setVideoLoaded(true)}
               onError={() => setVideoError(true)}
               className={`h-full w-full object-cover object-[62%_center] md:object-[64%_center] lg:object-[65%_center] transition-opacity duration-1000 ${
@@ -97,6 +115,7 @@ export const HeroSection: React.FC = () => {
             <img
               src={portraitImg}
               alt={portfolioData.personal.name}
+              decoding="async"
               className="h-full w-full object-cover object-[62%_center] md:object-[64%_center] lg:object-[65%_center] opacity-80 filter brightness-95 contrast-105"
             />
           )}
@@ -141,6 +160,9 @@ export const HeroSection: React.FC = () => {
               <img
                 src={watermarkImg}
                 alt="AI Developer Insignia Emblem"
+                width={96}
+                height={96}
+                decoding="async"
                 className="w-20 h-20 lg:w-24 lg:h-24 object-contain drop-shadow-[0_0_20px_rgba(212,175,55,0.25)] opacity-80"
               />
             </motion.div>

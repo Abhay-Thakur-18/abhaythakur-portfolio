@@ -175,6 +175,8 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
                   <img
                     src={certificate.certificateUrl}
                     alt={`${certificate.name} - Issued by ${certificate.issuer}`}
+                    loading="lazy"
+                    decoding="async"
                     className={`object-contain rounded transition-all duration-300 ${
                       isZoomed
                         ? 'max-h-none max-w-none scale-125 my-8 sm:my-12'

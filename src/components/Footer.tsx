@@ -2,10 +2,27 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { portfolioData } from '../data/portfolio';
 
+// Static data hoisted outside component to avoid allocations
+const exploreLinks = [
+  { name: 'ABOUT', href: '#about' },
+  { name: 'PROJECTS', href: '#projects' },
+  { name: 'SKILLS', href: '#skills' },
+  { name: 'EXPERIENCE', href: '#experience' },
+  { name: 'CONTACT', href: '#contact' },
+];
+
+const expertiseItems = [
+  'AI / MACHINE LEARNING',
+  'GENERATIVE AI',
+  'LLMs',
+  'DATA SCIENCE',
+  'PYTHON',
+  'DATA ANALYTICS',
+];
+
 export const Footer: React.FC = () => {
   const shouldReduceMotion = useReducedMotion();
   const footerRef = useRef<HTMLElement>(null);
-  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
   const [isHovered, setIsHovered] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
@@ -16,10 +33,20 @@ export const Footer: React.FC = () => {
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     if (isTouchDevice || shouldReduceMotion || !footerRef.current) return;
     const rect = footerRef.current.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    footerRef.current.style.setProperty('--mouse-x', `${x}px`);
+    footerRef.current.style.setProperty('--mouse-y', `${y}px`);
+  };
+
+  const handleMouseEnter = () => {
+    if (!isTouchDevice && !shouldReduceMotion) setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    footerRef.current?.style.setProperty('--mouse-x', '-1000px');
+    footerRef.current?.style.setProperty('--mouse-y', '-1000px');
   };
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -30,25 +57,6 @@ export const Footer: React.FC = () => {
       elem.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  // Column 02: Explore Navigation Links
-  const exploreLinks = [
-    { name: 'ABOUT', href: '#about' },
-    { name: 'PROJECTS', href: '#projects' },
-    { name: 'SKILLS', href: '#skills' },
-    { name: 'EXPERIENCE', href: '#experience' },
-    { name: 'CONTACT', href: '#contact' },
-  ];
-
-  // Column 03: Verified Real Skills
-  const expertiseItems = [
-    'AI / MACHINE LEARNING',
-    'GENERATIVE AI',
-    'LLMs',
-    'DATA SCIENCE',
-    'PYTHON',
-    'DATA ANALYTICS',
-  ];
 
   // Column 04: Connect Links with Lucide-style SVGs
   const connectChannels = [
@@ -119,11 +127,8 @@ export const Footer: React.FC = () => {
       ref={footerRef}
       id="footer"
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => !isTouchDevice && setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        setMousePos({ x: -100, y: -100 });
-      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className="relative w-full bg-[#050403] text-[#E8DFD8] border-t border-[#8C6D4F]/25 select-none overflow-hidden"
       role="contentinfo"
       aria-label="Site footer"
@@ -149,7 +154,7 @@ export const Footer: React.FC = () => {
           className="pointer-events-none absolute inset-0 transition-opacity duration-300 z-0"
           style={{
             background: isHovered
-              ? `radial-gradient(350px circle at ${mousePos.x}px ${mousePos.y}px, rgba(212,175,55,0.03), transparent 70%)`
+              ? 'radial-gradient(350px circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px), rgba(212,175,55,0.03), transparent 70%)'
               : 'transparent',
             opacity: isHovered ? 1 : 0,
           }}

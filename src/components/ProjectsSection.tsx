@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { portfolioData, type ProjectItem } from '../data/portfolio';
-import { ProjectDetailsModal } from './ProjectDetailsModal';
 import ScrollStack, { ScrollStackItem } from './ScrollStack';
+
+const ProjectDetailsModal = React.lazy(() =>
+  import('./ProjectDetailsModal').then((m) => ({ default: m.ProjectDetailsModal }))
+);
 
 interface ProjectCardProps {
   project: ProjectItem;
@@ -10,7 +13,7 @@ interface ProjectCardProps {
   onSelect: (p: ProjectItem) => void;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({
+const ProjectCard: React.FC<ProjectCardProps> = React.memo(({
   project,
   displayNumber,
   onSelect,
@@ -152,7 +155,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       </div>
     </div>
   </div>
-);
+));
 
 export const ProjectsSection: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
@@ -255,10 +258,12 @@ export const ProjectsSection: React.FC = () => {
         </ScrollStack>
       </div>
 
-      <ProjectDetailsModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
+      <React.Suspense fallback={null}>
+        <ProjectDetailsModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
+      </React.Suspense>
     </section>
   );
 };

@@ -10,23 +10,22 @@ interface SignalCardProps {
   prefersReducedMotion: boolean;
 }
 
-const SignalCard: React.FC<SignalCardProps> = ({
+const SignalCard: React.FC<SignalCardProps> = React.memo(({
   signal,
   index,
   isTouchDevice,
   prefersReducedMotion,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isTouchDevice || prefersReducedMotion || !cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    cardRef.current.style.setProperty('--mouse-x', `${x}px`);
+    cardRef.current.style.setProperty('--mouse-y', `${y}px`);
   };
 
   const handleMouseEnter = () => {
@@ -35,7 +34,8 @@ const SignalCard: React.FC<SignalCardProps> = ({
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    setMousePos({ x: -100, y: -100 });
+    cardRef.current?.style.setProperty('--mouse-x', '-1000px');
+    cardRef.current?.style.setProperty('--mouse-y', '-1000px');
   };
 
   const delay = index * 0.08;
@@ -73,7 +73,7 @@ const SignalCard: React.FC<SignalCardProps> = ({
           className="absolute inset-0 pointer-events-none transition-opacity duration-300 z-0"
           style={{
             background: isHovered
-              ? `radial-gradient(140px circle at ${mousePos.x}px ${mousePos.y}px, rgba(212,175,55,0.12), transparent 75%)`
+              ? 'radial-gradient(140px circle at var(--mouse-x, -1000px) var(--mouse-y, -1000px), rgba(212,175,55,0.12), transparent 75%)'
               : 'transparent',
             opacity: isHovered ? 1 : 0,
           }}
@@ -122,7 +122,7 @@ const SignalCard: React.FC<SignalCardProps> = ({
       </div>
     </motion.div>
   );
-};
+});
 
 export const ProfessionalSignals: React.FC = () => {
   const [isTouchDevice, setIsTouchDevice] = useState(false);

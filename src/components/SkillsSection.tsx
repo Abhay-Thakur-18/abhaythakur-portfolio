@@ -35,7 +35,7 @@ interface SkillCardProps {
   shouldReduceMotion: boolean | null;
 }
 
-const SkillCard: React.FC<SkillCardProps> = ({
+const SkillCard: React.FC<SkillCardProps> = React.memo(({
   category,
   isLastOdd,
   shouldReduceMotion,
@@ -158,7 +158,7 @@ const SkillCard: React.FC<SkillCardProps> = ({
       </div>
     </motion.div>
   );
-};
+});
 
 export const SkillsSection: React.FC = () => {
   const shouldReduceMotion = useReducedMotion();

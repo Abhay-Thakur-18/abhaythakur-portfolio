@@ -7,11 +7,14 @@ export const Navbar: React.FC = () => {
   const [activeSection, setActiveSection] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Monitor scroll state and active section
+  // Monitor scroll state and active section with rAF throttling
   useEffect(() => {
-    const handleScroll = () => {
+    let ticking = false;
+
+    const updateScrollState = () => {
       const scrollY = window.scrollY;
-      setIsScrolled(scrollY > 24);
+      const shouldBeScrolled = scrollY > 24;
+      setIsScrolled((prev) => (prev !== shouldBeScrolled ? shouldBeScrolled : prev));
 
       const scrollPosition = scrollY + 240;
       const sections = ['about', 'projects', 'skills', 'experience', 'contact'];
@@ -28,11 +31,19 @@ export const Navbar: React.FC = () => {
           }
         }
       }
-      setActiveSection(current);
+      setActiveSection((prev) => (prev !== current ? current : prev));
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateScrollState);
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    updateScrollState();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 

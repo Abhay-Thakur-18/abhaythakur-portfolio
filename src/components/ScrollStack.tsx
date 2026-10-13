@@ -37,6 +37,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
   const lenisRef = useRef<Lenis | null>(null);
   const cardsRef = useRef<HTMLElement[]>([]);
   const initialTopsRef = useRef<number[]>([]);
+  const endElementTopRef = useRef<number>(0);
   const lastTransformsRef = useRef(new Map());
   const isUpdatingRef = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -92,13 +93,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     const stackPositionPx = parsePercentage(stackPosition, containerHeight);
     const totalCards = cardsRef.current.length;
 
-    const endElement = innerRef.current
-      ? (innerRef.current.querySelector('.scroll-stack-end') as HTMLElement)
-      : null;
-
-    const endElementTop = endElement
-      ? endElement.getBoundingClientRect().top + window.scrollY
-      : 0;
+    const endElementTop = endElementTopRef.current;
 
     cardsRef.current.forEach((card, i) => {
       if (!card) return;
@@ -217,10 +212,18 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
     cardsRef.current = cards;
 
-    initialTopsRef.current = cards.map((card) => {
-      const rect = card.getBoundingClientRect();
-      return rect.top + window.scrollY;
-    });
+    const measurePositions = () => {
+      initialTopsRef.current = cards.map((card) => {
+        const rect = card.getBoundingClientRect();
+        return rect.top + window.scrollY;
+      });
+      const endEl = inner.querySelector('.scroll-stack-end') as HTMLElement | null;
+      endElementTopRef.current = endEl
+        ? endEl.getBoundingClientRect().top + window.scrollY
+        : 0;
+    };
+
+    measurePositions();
 
     cards.forEach((card, i) => {
       card.style.zIndex = `${i + 1}`;
@@ -237,10 +240,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
     const handleResize = () => {
       if (!innerRef.current) return;
-      initialTopsRef.current = cards.map((card) => {
-        const rect = card.getBoundingClientRect();
-        return rect.top + window.scrollY;
-      });
+      measurePositions();
       updateCardTransforms();
     };
 

@@ -1,8 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import { motion, useScroll, useTransform, useInView, useReducedMotion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { portfolioData, type CertificationItem, type ExperienceItem } from '../data/portfolio';
-import { CertificateModal } from './CertificateModal';
+const CertificateModal = React.lazy(() =>
+  import('./CertificateModal').then((m) => ({ default: m.CertificateModal }))
+);
 
 const certsGridVariants: Variants = {
   hidden: { opacity: 0 },
@@ -49,7 +51,7 @@ const MilestoneCard: React.FC<{
   stop: ExperienceItem;
   idx: number;
   shouldReduceMotion: boolean | null;
-}> = ({ stop, idx, shouldReduceMotion }) => {
+}> = React.memo(({ stop, idx, shouldReduceMotion }) => {
   const itemRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(itemRef, {
     margin: '-20% 0px -25% 0px',
@@ -244,7 +246,7 @@ const MilestoneCard: React.FC<{
       </div>
     </div>
   );
-};
+});
 
 export const ExperienceSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -252,9 +254,9 @@ export const ExperienceSection: React.FC = () => {
   const [selectedCert, setSelectedCert] = useState<CertificationItem | null>(null);
   const shouldReduceMotion = useReducedMotion();
 
-  const handleCertificateClick = (cert: CertificationItem) => {
+  const handleCertificateClick = useCallback((cert: CertificationItem) => {
     setSelectedCert(cert);
-  };
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: timelineRef,
@@ -434,10 +436,12 @@ export const ExperienceSection: React.FC = () => {
         </div>
       </div>
 
-      <CertificateModal
-        certificate={selectedCert}
-        onClose={() => setSelectedCert(null)}
-      />
+      <React.Suspense fallback={null}>
+        <CertificateModal
+          certificate={selectedCert}
+          onClose={() => setSelectedCert(null)}
+        />
+      </React.Suspense>
     </section>
   );
 };

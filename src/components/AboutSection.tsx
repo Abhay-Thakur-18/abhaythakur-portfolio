@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import abhayPortrait from '../assets/abhay-portrait.png';
+import abhayPortrait from '../assets/abhay-portrait.webp';
 import { portfolioData } from '../data/portfolio';
 import { ProfessionalSignals } from './ProfessionalSignals';
 
@@ -224,6 +224,8 @@ export const AboutSection: React.FC = () => {
                 <img
                   src={abhayPortrait}
                   alt={`${portfolioData.personal.name} - AI Engineer & Data Scientist`}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover object-[center_15%] filter brightness-[0.98] contrast-[1.04] group-hover:brightness-105 group-hover:scale-[1.02] transition-all duration-700 ease-out"
                 />
 
