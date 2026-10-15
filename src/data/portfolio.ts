@@ -675,6 +675,12 @@ export const portfolioData = {
     },
     certifications: [
       {
+        name: 'AI Product Intern',
+        issuer: 'Tessaris',
+        certificateUrl: '/certificates/tessaris-ai-product-intern.jpg',
+        date: 'October 2026',
+      },
+      {
         name: 'AI Tools Workshop',
         issuer: 'be10x',
         certificateUrl: '/certificates/be10x.png',
@@ -796,20 +802,30 @@ export const portfolioData = {
       },
       {
         id: '02',
+        year: 'MAY 2026 — SEPTEMBER 2026',
+        title: 'AI PRODUCT INTERN',
+        organization: 'TESSARIS',
+        status: 'INTERNSHIP',
+        type: 'internship',
+        description:
+          'Built project on Agentic Commerce using Google A2A, AP2, x402 and ERC-8004 protocols.',
+      },
+      {
+        id: '03',
         title: 'DATA SCIENCE MASTER VIRTUAL INTERNSHIP',
         organization: 'EDUSKILLS · ALTAIR',
         status: 'VIRTUAL INTERNSHIP',
         type: 'internship',
       },
       {
-        id: '03',
+        id: '04',
         title: 'AI-ML VIRTUAL INTERNSHIP',
         organization: 'EDUSKILLS · GOOGLE FOR DEVELOPERS',
         status: 'VIRTUAL INTERNSHIP',
         type: 'internship',
       },
       {
-        id: '04',
+        id: '05',
         title: 'HACKBHOOMI 2025 — 3RD PLACE',
         organization: 'SMART INDIA HACKATHON · INVERTIS UNIVERSITY',
         status: 'ACHIEVEMENT',
@@ -818,7 +834,7 @@ export const portfolioData = {
           'Awarded 3rd place in HackBhoomi 2025 (Internal Smart India Hackathon) for building an innovative AI-powered solution.',
       },
       {
-        id: '05',
+        id: '06',
         year: '2023 — 2027',
         title: 'B.TECH IN ARTIFICIAL INTELLIGENCE',
         organization: 'INVERTIS UNIVERSITY',
