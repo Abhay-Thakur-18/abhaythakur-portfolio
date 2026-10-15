@@ -656,7 +656,7 @@ export const portfolioData = {
     currentRole: {
       company: 'Techiguru',
       role: 'Data Science / AI-ML Intern',
-      duration: 'April 2026 – Present',
+      duration: 'April 2026 – August 2026',
       location: 'Bareilly',
       description:
         'Impactful internship focused on enhancing practical skills in Data Science and AI/ML.',
@@ -792,11 +792,11 @@ export const portfolioData = {
     timeline: [
       {
         id: '01',
-        year: 'APRIL 2026 — PRESENT',
+        year: 'APRIL 2026 — AUGUST 2026',
         title: 'DATA SCIENCE / AI-ML INTERN',
         organization: 'TECHIGURU · BAREILLY',
-        status: 'CURRENT',
-        type: 'experience',
+        status: 'INTERNSHIP',
+        type: 'internship',
         description:
           'Impactful internship focused on enhancing practical skills in Data Science and AI/ML.',
       },
